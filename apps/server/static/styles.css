@@ -22,7 +22,13 @@ body {
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial,
+  font-family:
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    Helvetica,
+    Arial,
     sans-serif;
   -webkit-font-smoothing: antialiased;
 }
@@ -238,4 +244,15 @@ a {
   font-size: 14px;
   line-height: 1.55;
   color: var(--text);
+}
+
+@media screen and (width < 580px) {
+  .controls {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-rows: auto;
+  }
+  .controls input.search {
+    grid-column: span 2 / span 2;
+  }
 }
