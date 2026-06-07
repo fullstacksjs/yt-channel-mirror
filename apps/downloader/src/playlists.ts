@@ -57,16 +57,14 @@ const writePlaylistData = async (
   const playlists = await Deno.readTextFile(
     join(libraryDir, "playlist-ids.txt"),
   );
-  const playlistsIds = playlists.split("\n").filter((ln) => !!ln);
-  const getPlaylistPromise: ReturnType<typeof getPlaylist>[] = [];
-  for (const playlistId of playlistsIds) {
-    getPlaylistPromise.push(
-      getPlaylist({
+  const getPlaylistPromise = playlists
+    .split("\n")
+    .filter((ln) => !!ln)
+    .map(playListId => getPlaylist({
         libraryDir,
         playlistUrl: `https://www.youtube.com/playlist\?list\=${playlistId}`,
       }),
     );
-  }
   await Promise.all(getPlaylistPromise);
 };
 
