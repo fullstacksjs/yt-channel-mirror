@@ -1,11 +1,7 @@
 import { join, relative } from "@std/path";
-import { run } from "./lib.ts";
+import { findFileByExt, IMAGE_EXTS, run } from "./lib.ts";
 
-interface GetPlaylistProps {
-  channelUrl: string;
-  libraryDir: string;
-}
-interface Playlist {
+export interface Playlist {
   id: string;
   title: string;
   description: string;
@@ -16,19 +12,7 @@ interface Playlist {
   modifiedDate: string | null;
 }
 
-const getAllPlaylists = async (opts: GetPlaylistProps) => {
-  const playlistIds = join(opts.libraryDir, "playlist-ids.txt");
-  const args = [
-    "--flat-playlist",
-    "--print-to-file",
-    "%(id)s",
-    playlistIds,
-    opts.channelUrl,
-  ];
-  await run("yt-dlp", args);
-};
-
-const getPlaylist = async (
+export const getPlaylist = async (
   { playlistUrl, libraryDir }: { playlistUrl: string; libraryDir: string },
 ) => {
   const videoIdsPathArg = join(libraryDir, "%(playlist_id)s/video_ids.txt");
@@ -50,30 +34,7 @@ const getPlaylist = async (
   await run("yt-dlp", args);
 };
 
-const writePlaylistData = async (
-  { libraryDir, channelUrl }: GetPlaylistProps,
-) => {
-  await getAllPlaylists({ channelUrl, libraryDir });
-  const playlists = await Deno.readTextFile(
-    join(libraryDir, "playlist-ids.txt"),
-  );
-  const getPlaylistPromise = playlists
-    .split("\n")
-    .filter((ln) => !!ln)
-    .map(playListId => getPlaylist({
-        libraryDir,
-        playlistUrl: `https://www.youtube.com/playlist\?list\=${playlistId}`,
-      }),
-    );
-  await Promise.all(getPlaylistPromise);
-};
-
-function findFileByExt(files: string[], exts: string[]): string | undefined {
-  return files.find((f) => exts.some((e) => f.toLowerCase().endsWith(e)));
-}
-const IMAGE_EXTS = [".jpg", ".jpeg", ".png", ".webp"];
-
-const buildPlaylist = async (
+export const buildPlaylist = async (
   { channelLabel, libraryDir }: {
     libraryDir: string;
     channelLabel: string | null;
@@ -147,7 +108,7 @@ const buildPlaylist = async (
     version: 1,
     generatedAt: new Date().toISOString(),
     channel: channelLabel,
-    videos: playlists,
+    playlists,
   };
 
   await Deno.writeTextFile(
@@ -157,13 +118,3 @@ const buildPlaylist = async (
 
   return playlist;
 };
-
-await writePlaylistData({
-  channelUrl: "https://www.youtube.com/@FullstacksJS/playlists",
-  libraryDir: "./library/playlist",
-});
-
-await buildPlaylist({
-  libraryDir: "./library/playlist",
-  channelLabel: "FullstacksJS",
-});

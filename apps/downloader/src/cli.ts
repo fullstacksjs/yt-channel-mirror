@@ -2,6 +2,7 @@
 import { resolve } from "@std/path";
 import { parseArgs } from "@std/cli/parse-args";
 import { buildCatalog, checkBinary, downloadChannel } from "./lib.ts";
+import { buildPlaylist, getPlaylist } from "./playlists.ts";
 
 interface Args {
   channel?: string;
@@ -9,11 +10,12 @@ interface Args {
   limit?: number;
   label?: string;
   catalogOnly: boolean;
+  playlist?: string;
 }
 
 function parseCliArgs(argv: string[]): Args {
   const parsed = parseArgs(argv, {
-    string: ["channel", "out", "limit", "label"],
+    string: ["channel", "out", "limit", "label", "playlist"],
     boolean: ["catalog-only", "help"],
     alias: { c: "channel", o: "out", n: "limit", h: "help" },
     default: { out: "./library", "catalog-only": false },
@@ -40,6 +42,7 @@ function parseCliArgs(argv: string[]): Args {
     limit: parsed.limit !== undefined ? Number(parsed.limit) : undefined,
     label: parsed.label,
     catalogOnly: parsed["catalog-only"],
+    playlist: parsed.playlist,
   };
 }
 
@@ -68,6 +71,14 @@ async function main(): Promise<void> {
   const libraryDir = resolve(args.out);
   await Deno.mkdir(libraryDir, { recursive: true });
 
+  const channelLabel = args.label ?? args.channel ?? null;
+
+  if (args.playlist) {
+    await getPlaylist({ libraryDir, playlistUrl: args.playlist });
+    await buildPlaylist({ channelLabel, libraryDir });
+    return;
+  }
+
   if (!args.catalogOnly) {
     if (!args.channel) {
       console.error(
@@ -90,7 +101,7 @@ async function main(): Promise<void> {
   console.log("Building catalog.json ...");
   const catalog = await buildCatalog(
     libraryDir,
-    args.label ?? args.channel ?? null,
+    channelLabel,
   );
   console.log(`Done. ${catalog.videos.length} video(s) in the library.`);
   console.log(

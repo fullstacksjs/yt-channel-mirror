@@ -1,8 +1,8 @@
 import { join, relative } from "@std/path";
 import { type Catalog, CATALOG_VERSION, type VideoMeta } from "./video.ts";
 
-const VIDEO_EXTS = [".mp4", ".m4v", ".webm", ".mkv"];
-const IMAGE_EXTS = [".jpg", ".jpeg", ".png", ".webp"];
+export const VIDEO_EXTS = [".mp4", ".m4v", ".webm", ".mkv"];
+export const IMAGE_EXTS = [".jpg", ".jpeg", ".png", ".webp"];
 
 /** Spawn a command, streaming its stdio to the parent. Resolves on exit code 0. */
 export async function run(
@@ -84,7 +84,10 @@ export async function downloadChannel(opts: DownloadOptions): Promise<void> {
   await run("yt-dlp", args);
 }
 
-function findFileByExt(files: string[], exts: string[]): string | undefined {
+export function findFileByExt(
+  files: string[],
+  exts: string[],
+): string | undefined {
   return files.find((f) => exts.some((e) => f.toLowerCase().endsWith(e)));
 }
 
