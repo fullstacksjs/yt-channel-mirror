@@ -1,13 +1,16 @@
 import { Application, Router, send } from "oak";
 // @ts-expect-error: no types for handlebars yet
 import { Handlebars } from "handlebars";
-import { resolve } from "@std/path";
+import { join, resolve } from "@std/path";
 import { CatalogStore } from "./catalog.ts";
 import { loadConfig } from "./config.ts";
+import { PlaylistStore } from "./playlists.ts";
 
 const dirname = import.meta.dirname!;
 const { hostname, port, libraryDir } = loadConfig();
+const playlistLibraryPath = join(join(libraryDir, "/playlists"));
 const store = new CatalogStore(libraryDir);
+const playlistStore = new PlaylistStore(playlistLibraryPath);
 
 function formatDuration(sec: number): string {
   if (!sec) return "";
@@ -46,6 +49,12 @@ const handle = new Handlebars({
 type SortKey = "newest" | "oldest" | "title";
 
 const router = new Router();
+
+router.use(async (ctx, next) => {
+  ctx.state.currentPath = ctx.request.url.pathname;
+
+  await next();
+});
 
 router.get("/api/health", (ctx) => {
   ctx.response.body = { ok: true };
@@ -114,6 +123,46 @@ router.get("/media/:id/thumb", async (ctx) => {
     return;
   }
   await send(ctx, video.thumb, { root: libraryDir });
+});
+
+router.get("/playlists", async (ctx) => {
+  const playlists = await playlistStore.getPlaylists();
+  ctx.response.type = "text/html";
+  ctx.response.body = await handle.renderView("playlists", {
+    title: "FullstacksJS - Video Library",
+    playlists: playlists.playlists,
+  });
+});
+
+router.get("/playlists/:id", async (ctx) => {
+  const playlist = await playlistStore.getById(ctx.params.id);
+  if (!playlist || !playlist.videoIds) {
+    ctx.response.status = 404;
+    ctx.response.body = "not found";
+    return;
+  }
+  const catalog = await store.getCatalog();
+  const videos = catalog.videos.filter((v) => playlist.videoIds.includes(v.id));
+
+  ctx.response.type = "text/html";
+  ctx.response.body = await handle.renderView("playlist", {
+    count: videos.length,
+    description: playlist.description,
+    title: playlist.title,
+    id: playlist.id,
+    actualVideoCount: playlist.videoIds.length,
+    videos,
+  });
+});
+
+router.get("/media/:id/playlists/thumb", async (ctx) => {
+  const playlist = await playlistStore.getById(ctx.params.id);
+  if (!playlist || !playlist.thumb) {
+    ctx.response.status = 404;
+    ctx.response.body = "not found";
+    return;
+  }
+  await send(ctx, playlist.thumb, { root: playlistLibraryPath });
 });
 
 router.get("/static/:path+", async (ctx) => {
