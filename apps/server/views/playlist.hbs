@@ -1,0 +1,33 @@
+<section class="playlist-details-section">
+    <img class="playlist-banner" loading="lazy" src="/media/{{id}}/playlists/thumb" alt="" />
+    <div>
+    <h1>{{title}}</h1>
+    <p>{{description}}</p>
+    <small>Available: {{count}}/{{actualVideoCount}}</small>
+    </div>
+</section>
+
+{{#unless videos.length}}
+  <div class="banner">No videos match your search.</div>
+{{/unless}}
+
+<div class="grid">
+  {{#each videos}}
+    <a href="/watch/{{id}}" class="card">
+      <div class="thumb-wrap">
+        {{#if thumb}}
+          <img loading="lazy" src="/media/{{id}}/thumb" alt="" />
+        {{else}}
+          <div class="thumb-placeholder">▶</div>
+        {{/if}}
+        {{#if durationSec}}
+          <span class="duration">{{formatDuration durationSec}}</span>
+        {{/if}}
+      </div>
+      <div class="card-body">
+        <h3 title="{{title}}">{{title}}</h3>
+        <p class="meta">{{formatDate uploadDate}}</p>
+      </div>
+    </a>
+  {{/each}}
+</div>

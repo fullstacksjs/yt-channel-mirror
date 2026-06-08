@@ -1,0 +1,25 @@
+{{#unless playlists.length}}
+  <div class="banner">No playlists match your search.</div>
+{{/unless}}
+
+<div class="grid">
+  {{#each playlists}}
+    <a href="/playlists/{{id}}" class="card">
+      <div class="thumb-wrap">
+        {{#if thumb}}
+          <img loading="lazy" src="/media/{{id}}/playlists/thumb" alt="" />
+        {{else}}
+          <div class="thumb-placeholder">▶</div>
+        {{/if}}
+        {{#if playlistCount}}
+          <span class="duration">{{playlistCount}}</span>
+        {{/if}}
+      </div>
+      <div class="card-body">
+        <h3 title="{{title}}">{{title}}</h3>
+        <p class="short-description">{{description}}</p>
+        <p class="meta">{{formatDate modifiedDate}}</p>
+      </div>
+    </a>
+  {{/each}}
+</div>
