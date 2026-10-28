@@ -1,15 +1,22 @@
 {
-  "workspace": ["./apps/downloader", "./apps/server"],
+  "workspace": [
+    "./apps/downloader",
+    "./apps/server"
+  ],
   "tasks": {
     "oym-dl": "./apps/downloader/src/cli.ts",
     "use-hooks": "./scripts/hooks/init"
   },
   "imports": {
     "@fullstacksjs/toolbox": "npm:@fullstacksjs/toolbox@4.22.0",
-    "@std/cli": "jsr:@std/cli@1.0.30",
-    "@std/path": "jsr:@std/path@1.1.5"
+    "@std/cli": "jsr:@std/cli@1.0.32",
+    "@std/path": "jsr:@std/path@1.1.6"
   },
   "fmt": {
-    "exclude": ["library", "apps/downloader/library", "apps/server/library"]
+    "exclude": [
+      "library",
+      "apps/downloader/library",
+      "apps/server/library"
+    ]
   }
 }
