@@ -19,7 +19,7 @@
     "jsr:@std/path@1.0.6": "1.0.6",
     "jsr:@std/path@1.1.6": "1.1.6",
     "jsr:@std/path@^1.0.6": "1.1.6",
-    "npm:@fullstacksjs/toolbox@4.22.0": "4.22.0",
+    "npm:@fullstacksjs/toolbox@4.25.1": "4.25.1",
     "npm:handlebars@4.7.7": "4.7.7",
     "npm:path-to-regexp@^6.3.0": "6.3.0"
   },
@@ -106,8 +106,8 @@
     }
   },
   "npm": {
-    "@fullstacksjs/toolbox@4.22.0": {
-      "integrity": "sha512-gr9YBfijzIMAAaqNQ8Wvdky+EH1oqRFTNLFU/xcJ4YoPurU1SeQDVjLsOKZiyBPgKAW62hedh7z1tdzcLqbrWw=="
+    "@fullstacksjs/toolbox@4.25.1": {
+      "integrity": "sha512-gG5hrrKU0O5DQrLE4UsANIPZ3MR21tY5jLb/PPy6Cl7bthhtTzGa/Vo3u3EkN5USjiccMETZbXvGoUXYEBBT9Q=="
     },
     "handlebars@4.7.7": {
       "integrity": "sha512-aAcXm5OAfE/8IXkcZvCepKU3VzW1/39Fb5ZuqMtgI/hT8X2YgoMvBY5dLhq/cpOvw7Lk1nK/UF71aLG/ZnVYRA==",
@@ -259,7 +259,7 @@
     "dependencies": [
       "jsr:@std/cli@1.0.32",
       "jsr:@std/path@1.1.6",
-      "npm:@fullstacksjs/toolbox@4.22.0"
+      "npm:@fullstacksjs/toolbox@4.25.1"
     ],
     "members": {
       "apps/server": {
